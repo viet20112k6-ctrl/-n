@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa hàng Sách Trí Thức - Nội Thất Hiện Đại</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e3',
+                            500: '#c27803',
+                            600: '#9a5b02',
+                            700: '#7c4701',
+                            800: '#653a03',
+                            900: '#553105',
+                        },
+                        stone: {
+                            850: '#1c1917'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i data-lucide="armchair" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-stone-900 block leading-tight">Trí Thức</span>
+                        <span class="text-xs uppercase tracking-widest text-brand-600 font-semibold">Nội Thất Hiện Đại</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <button onclick="switchTab('home')" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent" data-target="home">Trang Chủ</button>
+                    <button onclick="switchTab('shop')" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent" data-target="shop">Sản Phẩm</button>
+                    <button onclick="switchTab('shop'); filterByCategory('Phòng Khách')" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Phòng Khách</button>
+                    <button onclick="switchTab('shop'); filterByCategory('Phòng Ngủ')" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Phòng Ngủ</button>
+                    <button onclick="switchTab('shop'); filterByCategory('Nhà Bếp')" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Nhà Bếp</button>
+                    <button id="nav-orders" onclick="switchTab('orders')" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent flex items-center gap-1.5" data-target="orders">
+                        <i data-lucide="package" class="w-4 h-4"></i> Đơn Hàng (<span id="orderCountBadge">0</span>)
+                    </button>
+                    <button id="nav-admin" onclick="switchTab('admin')" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent hidden flex items-center gap-1.5" data-target="admin">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Quản Trị
+                    </button>
+                </nav>
+
+                <!-- Actions: Search & Cart -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden lg:block w-64">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm nội thất..." oninput="handleSearch(event)" class="w-full bg-stone-100 border border-stone-200 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                        <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-3"></i>
+                    </div>
+
+                    <button id="nav-cart" onclick="toggleCartDrawer(true)" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <span id="cartBadge" class="absolute -top-1 -right-1 bg-brand-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">0</span>
+                    </button>
+
+                    <button onclick="handleLogout()" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-red-600 transition-colors hidden" id="nav-logout" title="Đăng xuất">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden transition-opacity opacity-0 md:hidden">
+        <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-sm bg-white p-6 shadow-2xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-stone-100">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                            <i data-lucide="armchair" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-bold text-stone-900">Trí Thức Nội Thất</span>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="p-2 text-stone-500 hover:text-stone-800">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="mt-6 space-y-4">
+                    <div class="relative">
+                        <input type="text" id="mobileSearchInput" placeholder="Tìm kiếm..." oninput="handleSearch(event)" class="w-full bg-stone-100 border border-stone-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none">
+                        <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-2.5"></i>
+                    </div>
+                    <nav class="flex flex-col space-y-2 pt-2">
+                        <button onclick="switchTab('home'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Trang Chủ</button>
+                        <button onclick="switchTab('shop'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Tất Cả Sản Phẩm</button>
+                        <button onclick="switchTab('shop'); filterByCategory('Phòng Khách'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Phòng Khách</button>
+                        <button onclick="switchTab('shop'); filterByCategory('Phòng Ngủ'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Phòng Ngủ</button>
+                        <button onclick="switchTab('shop'); filterByCategory('Nhà Bếp'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Nhà Bếp</button>
+                        <button onclick="switchTab('shop'); filterByCategory('Văn Phòng'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Văn Phòng</button>
+                        <button id="mobile-nav-orders" onclick="switchTab('orders'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100 flex items-center justify-between">
+                            <span>Quản Lý Đơn Hàng</span>
+                            <span id="mobileOrderBadge" class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                        </button>
+                        <button id="mobile-nav-admin" onclick="switchTab('admin'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100 hidden">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 inline mr-2"></i> Quản Trị Viên
+                        </button>
+                        <button id="mobile-nav-logout" onclick="handleLogout(); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-red-600 hover:bg-red-50 hidden">
+                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i> Đăng Xuất
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-stone-100 text-xs text-stone-400 text-center">
+                &copy; 2026 Cửa hàng Sách Trí Thức Nội Thất. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+
+        <!-- 1. HOME TAB -->
+        <div id="view-home" class="tab-view">
+            <!-- Hero Banner Slider / Showcase -->
+            <section class="relative bg-stone-900 text-white overflow-hidden">
+                <div class="absolute inset-0 opacity-40 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80')"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/80 to-transparent"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 relative z-10">
+                    <div class="max-w-2xl">
+                        <span class="inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-full text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30 mb-6">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Bộ Sưu Tập Mới 2026
+                        </span>
+                        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6">
+                            Kiến Tạo Không Gian Sống <span class="text-brand-500">Đẳng Cấp</span>
+                        </h1>
+                        <p class="text-stone-300 text-lg md:text-xl mb-8 leading-relaxed">
+                            Khám phá các thiết kế nội thất hiện đại tối ưu công năng, kết hợp chất liệu cao cấp mang lại sự sang trọng và ấm cúng cho ngôi nhà của bạn.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="switchTab('shop')" class="px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/30 transition-all flex items-center gap-2">
+                                <span>Khám Phá Bộ Sưu Tập</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="switchTab('shop'); filterByCategory('Phòng Khách');" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl backdrop-blur-md transition-all border border-white/20">
+                                Xem Phòng Khách
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Bar -->
+            <section class="bg-white border-b border-stone-200 py-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="flex items-center space-x-4 p-4 rounded-xl bg-stone-50 border border-stone-100">
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="truck" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm">Miễn Phí Vận Chuyển</h4>
+                            <p class="text-xs text-stone-500 mt-0.5">Cho đơn hàng trên 5 triệu VNĐ</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 p-4 rounded-xl bg-stone-50 border border-stone-100">
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm">Bảo Hành 5 Năm</h4>
+                            <p class="text-xs text-stone-500 mt-0.5">Cam kết chất lượng gỗ và kết cấu</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 p-4 rounded-xl bg-stone-50 border border-stone-100">
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="headphones" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm">Hỗ Trợ 24/7</h4>
+                            <p class="text-xs text-stone-500 mt-0.5">Tư vấn thiết kế nội thất miễn phí</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 p-4 rounded-xl bg-stone-50 border border-stone-100">
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm">Đổi Trả Dễ Dàng</h4>
+                            <p class="text-xs text-stone-500 mt-0.5">Trong vòng 30 ngày nếu lỗi NSX</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Grid (Phòng Khách, Phòng Ngủ, Nhà Bếp, Văn Phòng) -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                    <div>
+                        <span class="text-brand-600 font-semibold text-sm uppercase tracking-wider">Danh Mục Sản Phẩm</span>
+                        <h2 class="text-3xl font-bold text-stone-900 mt-1">Khám Phá Theo Không Gian</h2>
+                    </div>
+                    <button onclick="switchTab('shop')" class="mt-4 md:mt-0 text-brand-600 hover:text-brand-700 font-semibold text-sm flex items-center gap-1 group">
+                        Xem tất cả sản phẩm <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Category Card 1 -->
+                    <div onclick="switchTab('shop'); filterByCategory('Phòng Khách');" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80" alt="Phòng Khách" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                            <span class="text-xs uppercase tracking-widest text-brand-400 font-bold">Bộ Sưu Tập</span>
+                            <h3 class="text-2xl font-bold mt-1">Phòng Khách</h3>
+                            <p class="text-stone-300 text-sm mt-2 line-clamp-2">Sofa sang trọng, bàn trà tinh tế và kệ tivi hiện đại.</p>
+                        </div>
+                    </div>
+                    <!-- Category Card 2 -->
+                    <div onclick="switchTab('shop'); filterByCategory('Phòng Ngủ');" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1540518614846-7ede433c4ef0?auto=format&fit=crop&w=800&q=80" alt="Phòng Ngủ" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                            <span class="text-xs uppercase tracking-widest text-brand-400 font-bold">Bộ Sưu Tập</span>
+                            <h3 class="text-2xl font-bold mt-1">Phòng Ngủ</h3>
+                            <p class="text-stone-300 text-sm mt-2 line-clamp-2">Giường ngủ êm ái, tủ quần áo và tab đầu giường.</p>
+                        </div>
+                    </div>
+                    <!-- Category Card 3 -->
+                    <div onclick="switchTab('shop'); filterByCategory('Nhà Bếp');" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80" alt="Nhà Bếp" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                            <span class="text-xs uppercase tracking-widest text-brand-400 font-bold">Bộ Sưu Tập</span>
+                            <h3 class="text-2xl font-bold mt-1">Nhà Bếp & Ăn Uống</h3>
+                            <p class="text-stone-300 text-sm mt-2 line-clamp-2">Bàn ăn thanh lịch, ghế ăn bọc da và tủ bếp đa năng.</p>
+                        </div>
+                    </div>
+                    <!-- Category Card 4 -->
+                    <div onclick="switchTab('shop'); filterByCategory('Văn Phòng');" class="group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80" alt="Văn Phòng" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                            <span class="text-xs uppercase tracking-widest text-brand-400 font-bold">Bộ Sưu Tập</span>
+                            <h3 class="text-2xl font-bold mt-1">Văn Phòng Làm Việc</h3>
+                            <p class="text-stone-300 text-sm mt-2 line-clamp-2">Bàn làm việc thông minh và ghế công thái học cao cấp.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Products Carousel / Grid -->
+            <section class="bg-stone-100 py-16 border-t border-stone-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                        <div>
+                            <span class="text-brand-600 font-semibold text-sm uppercase tracking-wider">Sản Phẩm Nổi Bật</span>
+                            <h2 class="text-3xl font-bold text-stone-900 mt-1">Xu Hướng Nội Thất 2026</h2>
+                        </div>
+                        <button onclick="switchTab('shop')" class="mt-4 md:mt-0 px-5 py-2.5 bg-white border border-stone-300 hover:border-stone-400 text-stone-800 rounded-xl font-semibold text-sm transition-all shadow-sm">
+                            Xem Tất Cả
+                        </button>
+                    </div>
+
+                    <div id="featuredProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 2. SHOP / CATALOG TAB -->
+        <div id="view-shop" class="tab-view hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center space-x-2 text-sm text-stone-500 mb-6">
+                    <button onclick="switchTab('home')" class="hover:text-brand-600">Trang Chủ</button>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <span class="text-stone-900 font-medium">Danh Mục Sản Phẩm</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Filters Sidebar -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+                            <div class="flex items-center justify-between pb-4 border-b border-stone-100 mb-6">
+                                <h3 class="font-bold text-stone-900 flex items-center gap-2">
+                                    <i data-lucide="filter" class="w-4 h-4 text-brand-600"></i> Bộ Lọc Tìm Kiếm
+                                </h3>
+                                <button onclick="resetFilters()" class="text-xs text-brand-600 hover:underline font-semibold">Đặt lại</button>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Danh Mục</h4>
+                                <div id="categoryFiltersList" class="space-y-2">
+                                    <!-- Rendered by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Price Range Filter -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Khoảng Giá</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="all" checked onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Tất cả mức giá</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="0-3000000" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Dưới 3.000.000 đ</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="3000000-10000000" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>3.000.000 đ - 10.000.000 đ</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="10000000-999999999" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Trên 10.000.000 đ</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sort By -->
+                            <div>
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Sắp Xếp Theo</h4>
+                                <select id="sortBySelect" onchange="applyFilters()" class="w-full bg-stone-50 border border-stone-200 rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="featured">Nổi Bật Nhất</option>
+                                    <option value="price-asc">Giá: Thấp đến Cao</option>
+                                    <option value="price-desc">Giá: Cao đến Thấp</option>
+                                    <option value="rating">Đánh Giá Cao Nhất</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid Display -->
+                    <div class="lg:col-span-3">
+                        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-sm mb-6">
+                            <span id="productCountLabel" class="text-sm text-stone-600 font-medium">Hiển thị tất cả sản phẩm</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-stone-500 hidden sm:inline">Trạng thái: Sẵn hàng giao ngay</span>
+                            </div>
+                        </div>
+
+                        <div id="shopProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Populated via JS -->
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="noProductsFound" class="hidden text-center py-16 bg-white rounded-2xl border border-stone-200 p-8">
+                            <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="search-x" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-stone-900">Không tìm thấy sản phẩm phù hợp</h3>
+                            <p class="text-sm text-stone-500 mt-1 mb-6">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
+                            <button onclick="resetFilters()" class="px-5 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-semibold shadow-md">Xóa Bộ Lọc</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PRODUCT DETAIL MODAL / VIEW -->
+        <div id="view-detail" class="tab-view hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center space-x-2 text-sm text-stone-500 mb-6">
+                    <button onclick="switchTab('shop')" class="hover:text-brand-600">Sản Phẩm</button>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <span id="detailBreadcrumbName" class="text-stone-900 font-medium">Chi tiết sản phẩm</span>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm p-6 lg:p-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        <!-- Image Gallery -->
+                        <div class="space-y-4">
+                            <div class="aspect-square bg-stone-100 rounded-2xl overflow-hidden border border-stone-100">
+                                <img id="detailMainImage" src="" alt="Sản phẩm" class="w-full h-full object-cover">
+                            </div>
+                            <div id="detailThumbnails" class="grid grid-cols-4 gap-3">
+                                <!-- Thumbnails -->
+                            </div>
+                        </div>
+
+                        <!-- Product Info & Options -->
+                        <div class="flex flex-col justify-between">
+                            <div>
+                                <span id="detailCategoryBadge" class="inline-block py-1 px-3 rounded-full text-xs font-semibold bg-brand-100 text-brand-800 mb-3">Phòng Khách</span>
+                                <h1 id="detailTitle" class="text-3xl font-bold text-stone-900 tracking-tight">Tên sản phẩm</h1>
+                                
+                                <div class="flex items-center space-x-3 mt-3">
+                                    <div class="flex items-center text-amber-500">
+                                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                    </div>
+                                    <span class="text-sm text-stone-500 font-medium">(4.9 / 5 đánh giá)</span>
+                                    <span class="text-stone-300">|</span>
+                                    <span class="text-sm text-emerald-600 font-semibold flex items-center gap-1">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Còn hàng
+                                    </span>
+                                </div>
+
+                                <div class="mt-6 flex items-baseline space-x-4">
+                                    <span id="detailPrice" class="text-3xl font-extrabold text-brand-700">0 đ</span>
+                                    <span id="detailOldPrice" class="text-lg text-stone-400 line-through">0 đ</span>
+                                </div>
+
+                                <p id="detailDescription" class="text-stone-600 text-sm mt-4 leading-relaxed">
+                                    Mô tả sản phẩm chi tiết...
+                                </p>
+
+                                <!-- Color Options -->
+                                <div class="mt-6 pt-6 border-t border-stone-100">
+                                    <label class="block text-sm font-semibold text-stone-900 mb-3">Tùy Chọn Màu Sắc: <span id="selectedColorLabel" class="text-brand-600 font-bold">Xám Đậm</span></label>
+                                    <div id="detailColorsContainer" class="flex items-center space-x-3">
+                                        <!-- Rendered via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Size Options -->
+                                <div class="mt-6">
+                                    <label class="block text-sm font-semibold text-stone-900 mb-3">Tùy Chọn Kích Thước: <span id="selectedSizeLabel" class="text-brand-600 font-bold">Tiêu Chuẩn</span></label>
+                                    <div id="detailSizesContainer" class="flex flex-wrap gap-3">
+                                        <!-- Rendered via JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Quantity Counter -->
+                                <div class="mt-6 flex items-center space-x-4">
+                                    <label class="text-sm font-semibold text-stone-900">Số Lượng:</label>
+                                    <div class="flex items-center border border-stone-200 rounded-xl bg-stone-50 overflow-hidden">
+                                        <button onclick="adjustDetailQty(-1)" class="px-3.5 py-2 hover:bg-stone-200 text-stone-700 font-bold">-</button>
+                                        <span id="detailQuantity" class="w-12 text-center text-sm font-bold text-stone-900">1</span>
+                                        <button onclick="adjustDetailQty(1)" class="px-3.5 py-2 hover:bg-stone-200 text-stone-700 font-bold">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-10 pt-6 border-t border-stone-100 flex flex-col sm:flex-row gap-4">
+                                <button onclick="addCurrentProductToCart()" class="flex-1 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/30 transition-all flex items-center justify-center gap-2">
+                                    <i data-lucide="shopping-bag" class="w-5 h-5"></i> Thêm Vào Giỏ Hàng
+                                </button>
+                                <button onclick="buyNowCurrentProduct()" class="flex-1 py-4 bg-stone-900 hover:bg-stone-800 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                                    <i data-lucide="zap" class="w-5 h-5"></i> Mua Ngay
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ORDERS MANAGEMENT TAB -->
+        <div id="view-orders" class="tab-view hidden">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-stone-900">Quản Lý Đơn Hàng Của Bạn</h1>
+                        <p class="text-sm text-stone-500 mt-1">Theo dõi trạng thái và lịch sử các đơn hàng đã đặt</p>
+                    </div>
+                    <button onclick="switchTab('shop')" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-sm font-semibold">
+                        Tiếp Tục Mua Sắm
+                    </button>
+                </div>
+
+                <div id="ordersListContainer" class="space-y-6">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Empty Orders -->
+                <div id="noOrdersState" class="hidden text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 shadow-sm">
+                    <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="package-open" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-stone-900">Bạn chưa có đơn hàng nào</h3>
+                    <p class="text-sm text-stone-500 mt-1 mb-6">Hãy khám phá các sản phẩm nội thất tuyệt vời của chúng tôi và đặt hàng ngay.</p>
+                    <button onclick="switchTab('shop')" class="px-6 py-3 bg-brand-600 text-white rounded-xl text-sm font-semibold shadow-md">Khám Phá Sản Phẩm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. CHECKOUT VIEW -->
+        <div id="view-checkout" class="tab-view hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="flex items-center space-x-2 text-sm text-stone-500 mb-6">
+                    <button onclick="toggleCartDrawer(true)" class="hover:text-brand-600">Giỏ Hàng</button>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <span class="text-stone-900 font-medium">Thanh Toán Đơn Hàng</span>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 lg:p-10">
+                    <h2 class="text-2xl font-bold text-stone-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-brand-600"></i> Thông Tin Thanh Toán
+                    </h2>
+
+                    <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">1. Địa Chỉ Nhận Hàng</h3>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Họ và tên người nhận *</label>
+                                <input type="text" id="shipName" required placeholder="Nguyễn Văn A" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Số điện thoại *</label>
+                                <input type="tel" id="shipPhone" required placeholder="0912345678" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Email xác nhận</label>
+                                <input type="email" id="shipEmail" placeholder="email@domain.com" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Địa chỉ giao hàng chi tiết *</label>
+                                <textarea id="shipAddress" required rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Ghi chú đơn hàng (tuỳ chọn)</label>
+                                <input type="text" id="shipNote" placeholder="Giao giờ hành chính, gọi trước khi đến..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <h3 class="font-bold text-stone-800 text-sm uppercase tracking-wider mb-2">2. Phương Thức Thanh Toán</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-start space-x-3 p-4 rounded-xl border border-stone-200 hover:border-brand-500 cursor-pointer bg-stone-50 transition-all">
+                                        <input type="radio" name="paymentMethod" value="COD" checked class="mt-1 text-brand-600 focus:ring-brand-500">
+                                        <div>
+                                            <span class="block font-bold text-stone-900 text-sm">Thanh toán khi nhận hàng (COD)</span>
+                                            <span class="text-xs text-stone-500">Thanh toán bằng tiền mặt khi giao hàng tận nơi.</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-start space-x-3 p-4 rounded-xl border border-stone-200 hover:border-brand-500 cursor-pointer bg-stone-50 transition-all">
+                                        <input type="radio" name="paymentMethod" value="BankTransfer" class="mt-1 text-brand-600 focus:ring-brand-500">
+                                        <div>
+                                            <span class="block font-bold text-stone-900 text-sm">Chuyển khoản ngân hàng (QR Code)</span>
+                                            <span class="text-xs text-stone-500">Quét mã QR qua ứng dụng ngân hàng nội địa.</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-start space-x-3 p-4 rounded-xl border border-stone-200 hover:border-brand-500 cursor-pointer bg-stone-50 transition-all">
+                                        <input type="radio" name="paymentMethod" value="EWallet" class="mt-1 text-brand-600 focus:ring-brand-500">
+                                        <div>
+                                            <span class="block font-bold text-stone-900 text-sm">Ví điện tử Momo / VNPAY</span>
+                                            <span class="text-xs text-stone-500">Thanh toán trực tuyến nhanh chóng, an toàn.</span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- Summary Box -->
+                                <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200 mt-6">
+                                    <h4 class="font-bold text-stone-900 text-sm mb-3">Tóm Tắt Đơn Hàng</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between text-stone-600">
+                                            <span>Tổng tiền hàng:</span>
+                                            <span id="checkoutSubtotal" class="font-semibold text-stone-900">0 đ</span>
+                                        </div>
+                                        <div class="flex justify-between text-stone-600">
+                                            <span>Phí vận chuyển:</span>
+                                            <span class="font-semibold text-emerald-600">Miễn phí</span>
+                                        </div>
+                                        <div class="pt-3 border-t border-stone-200 flex justify-between text-base font-bold text-stone-900">
+                                            <span>Tổng thanh toán:</span>
+                                            <span id="checkoutTotal" class="text-brand-700">0 đ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 flex gap-4">
+                                <button type="button" onclick="switchTab('shop')" class="w-1/3 py-4 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-xl text-sm transition-all">
+                                    Quay Lại
+                                </button>
+                                <button type="submit" class="w-2/3 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/30 transition-all text-sm flex items-center justify-center gap-2">
+                                    <i data-lucide="shield-check" class="w-5 h-5"></i> Xác Nhận Đặt Hàng
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. ADMIN DASHBOARD TAB -->
+        <div id="view-admin" class="tab-view hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-stone-900">Bảng Điều Khiển Quản Trị</h1>
+                        <p class="text-sm text-stone-500 mt-1">Quản lý toàn bộ hệ thống cửa hàng Nội Thất Trí Thức</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center">
+                            <i data-lucide="box" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-stone-500 font-medium">Tổng Sản Phẩm</p>
+                            <p class="text-2xl font-bold text-stone-900" id="adminTotalProducts">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-stone-500 font-medium">Tổng Đơn Hàng</p>
+                            <p class="text-2xl font-bold text-stone-900" id="adminTotalOrders">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-stone-500 font-medium">Doanh Thu</p>
+                            <p class="text-2xl font-bold text-stone-900" id="adminTotalRevenue">0 đ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-stone-200 shadow-sm p-8 text-center">
+                    <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="settings" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-stone-900">Tính năng đang được phát triển</h3>
+                    <p class="text-sm text-stone-500 mt-1">Các chức năng thêm/sửa/xóa sản phẩm và quản lý đơn hàng sẽ được cập nhật sớm.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Slide-Over Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-stone-900/50 backdrop-blur-sm transition-opacity opacity-0" id="cartOverlay" onclick="toggleCartDrawer(false)"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div id="cartPanel" class="w-screen max-w-md bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300">
+                <!-- Cart Header -->
+                <div class="flex items-center justify-between p-6 border-b border-stone-100">
+                    <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-600"></i> Giỏ Hàng Của Bạn (<span id="cartItemCount">0</span>)
+                    </h2>
+                    <button onclick="toggleCartDrawer(false)" class="p-2 text-stone-400 hover:text-stone-700 rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Cart Footer -->
+                <div id="cartFooter" class="p-6 border-t border-stone-100 bg-stone-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-stone-600 font-medium">Tạm tính:</span>
+                        <span id="cartSubtotal" class="text-xl font-extrabold text-stone-900">0 đ</span>
+                    </div>
+                    <p class="text-xs text-stone-500 mb-4">* Phí vận chuyển và thuế sẽ được tính ở trang thanh toán.</p>
+                    <div class="space-y-3">
+                        <button onclick="proceedToCheckout()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                            <span>Tiến Hành Thanh Toán</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="toggleCartDrawer(false)" class="w-full py-3 bg-white border border-stone-300 hover:bg-stone-100 text-stone-800 font-semibold rounded-xl text-sm transition-all">
+                            Tiếp Tục Mua Sắm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Message Box -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-stone-900 text-white px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-stone-800">
+            <div id="toastIconContainer" class="text-emerald-400">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </div>
+            <span id="toastMessage" class="text-sm font-medium">Thông báo thành công!</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white">
+                        <i data-lucide="armchair" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-lg font-bold text-white">Trí Thức Nội Thất</span>
+                </div>
+                <p class="text-stone-400 text-sm leading-relaxed mb-6">
+                    Đơn vị hàng đầu trong lĩnh vực thiết kế và cung cấp nội thất hiện đại cao cấp, mang đến vẻ đẹp tinh tế cho mọi không gian sống.
+                </p>
+                <div class="flex space-x-3 text-stone-400">
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Không Gian</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><button onclick="switchTab('shop'); filterByCategory('Phòng Khách');" class="hover:text-brand-400 transition-colors">Phòng Khách Hiện Đại</button></li>
+                    <li><button onclick="switchTab('shop'); filterByCategory('Phòng Ngủ');" class="hover:text-brand-400 transition-colors">Phòng Ngủ Ấm Cúng</button></li>
+                    <li><button onclick="switchTab('shop'); filterByCategory('Nhà Bếp');" class="hover:text-brand-400 transition-colors">Nhà Bếp & Ăn Uống</button></li>
+                    <li><button onclick="switchTab('shop'); filterByCategory('Văn Phòng');" class="hover:text-brand-400 transition-colors">Văn Phòng Làm Việc</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Chính Sách & Hỗ Trợ</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Chính Sách Bảo Hành</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Hướng Dẫn Mua Hàng</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Chính Sách Đổi Trả</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Tư Vấn Thiết Kế Miễn Phí</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Liên Hệ & Showroom</h4>
+                <ul class="space-y-3 text-sm text-stone-400">
+                    <li class="flex items-start gap-3">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-brand-500 flex-shrink-0 mt-0.5"></i>
+                        <span>123 Đường Nội Thất, Quận 1, TP. Hồ Chí Minh</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="phone" class="w-5 h-5 text-brand-500 flex-shrink-0"></i>
+                        <span>Hotline: 1900 6789</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-brand-500 flex-shrink-0"></i>
+                        <span>contact@trithucinterior.vn</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-stone-800 text-center text-xs text-stone-500">
+            &copy; 2026 Cửa hàng Sách Trí Thức - Nội Thất Hiện Đại. Bản quyền thuộc về Trí Thức.
+        </div>
+    </footer>
+
+    <!-- Login Modal (Admin & Buyer) -->
+    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 backdrop-blur-md transition-all duration-300">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl transform transition-all duration-300 scale-100" id="loginModalContent">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 mx-auto flex items-center justify-center text-white shadow-lg shadow-brand-500/30 mb-4">
+                    <i data-lucide="armchair" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-stone-900">Đăng Nhập</h2>
+                <p class="text-stone-500 text-sm mt-2">Vui lòng chọn vai trò để tiếp tục</p>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="handleLogin('admin')" class="w-full flex items-center justify-between p-4 rounded-xl border border-stone-200 hover:border-brand-500 hover:bg-brand-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-stone-100 group-hover:bg-brand-100 flex items-center justify-center text-stone-600 group-hover:text-brand-600 transition-colors">
+                            <i data-lucide="shield" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-stone-900">Quản Trị Viên (Admin)</h3>
+                            <p class="text-xs text-stone-500">Truy cập trang quản lý cửa hàng</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-stone-400 group-hover:text-brand-600 transition-colors"></i>
+                </button>
+                
+                <button onclick="handleLogin('buyer')" class="w-full flex items-center justify-between p-4 rounded-xl border border-stone-200 hover:border-brand-500 hover:bg-brand-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-stone-100 group-hover:bg-brand-100 flex items-center justify-center text-stone-600 group-hover:text-brand-600 transition-colors">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-stone-900">Người Mua</h3>
+                            <p class="text-xs text-stone-500">Khám phá và mua sắm nội thất</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-stone-400 group-hover:text-brand-600 transition-colors"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Mock Database of Furniture Products
+        const products = [
+            {
+                id: 1,
+                name: "Sofa Góc L Bọc Da Ý Cao Cấp",
+                category: "Phòng Khách",
+                price: 18500000,
+                oldPrice: 22000000,
+                rating: 4.9,
+                badge: "Bán Chạy",
+                images: [
+                    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Sofa góc L bọc da bò nhập khẩu Ý nguyên tấm, khung gỗ sồi tự nhiên đã qua xử lý chống mối mọt. Đệm mút cao cấp đàn hồi cao mang lại cảm giác thư giãn tuyệt đối cho phòng khách nhà bạn.",
+                colors: [
+                    { name: "Xám Đậm", hex: "#4b5563" },
+                    { name: "Nâu Cognac", hex: "#78350f" },
+                    { name: "Kem Sữa", hex: "#fef3c7" }
+                ],
+                sizes: ["Tiêu Chuẩn (2.8m)", "Lớn (3.2m)", "Nhỏ Gọn (2.4m)"]
+            },
+            {
+                id: 2,
+                name: "Bàn Trà Sofa Mặt Đá Ceramic",
+                category: "Phòng Khách",
+                price: 4500000,
+                oldPrice: 5600000,
+                rating: 4.8,
+                badge: "Mới",
+                images: [
+                    "https://images.unsplash.com/photo-1533779283484-8ab4940aa78f?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Bàn trà đôi kết hợp mặt đá ceramic chống trầy xước cao cấp vân mây độc đáo. Khung chân thép sơn tĩnh điện mạ vàng sang trọng tạo điểm nhấn nổi bật.",
+                colors: [
+                    { name: "Đá Trắng Vân Mây", hex: "#f3f4f6" },
+                    { name: "Đá Đen Tia Chớp", hex: "#111827" }
+                ],
+                sizes: ["Đường Kính 80cm", "Đường Kính 100cm"]
+            },
+            {
+                id: 3,
+                name: "Giường Ngủ Gỗ Sồi Tự Nhiên",
+                category: "Phòng Ngủ",
+                price: 12800000,
+                oldPrice: 15000000,
+                rating: 4.9,
+                badge: "Hot",
+                images: [
+                    "https://images.unsplash.com/photo-1540518614846-7ede433c4ef0?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Giường ngủ làm từ 100% gỗ sồi tự nhiên nhập khẩu Bắc Âu. Thiết kế tối giản, đầu giường bọc nỉ êm ái thích hợp cho không gian phòng ngủ hiện đại.",
+                colors: [
+                    { name: "Gỗ Tự Nhiên Sáng", hex: "#d97706" },
+                    { name: "Gỗ Óc Chó Trầm", hex: "#451a03" }
+                ],
+                sizes: ["1m6 x 2m", "1m8 x 2m", "2m x 2m2"]
+            },
+            {
+                id: 4,
+                name: "Tủ Quần Áo Cánh Kính Hiện Đại",
+                category: "Phòng Ngủ",
+                price: 15600000,
+                oldPrice: 18000000,
+                rating: 4.7,
+                badge: "Cao Cấp",
+                images: [
+                    "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1558997519-83ea9252dfac?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Tủ quần áo thông minh tích hợp đèn LED cảm ứng bên trong. Cánh kính cường lực viền nhôm đen sang trọng giúp trưng bày thời trang đẳng cấp.",
+                colors: [
+                    { name: "Kính Đen Khói", hex: "#374151" },
+                    { name: "Kính Trà Trong", hex: "#92400e" }
+                ],
+                sizes: ["3 Cánh (1m6)", "4 Cánh (2m2)", "5 Cánh (2m8)"]
+            },
+            {
+                id: 5,
+                name: "Bàn Ăn Mặt Đá 6 Ghế Bọc Da",
+                category: "Nhà Bếp",
+                price: 14200000,
+                oldPrice: 16500000,
+                rating: 4.9,
+                badge: "Bán Chạy",
+                images: [
+                    "https://images.unsplash.com/photo-1617806118233-18e1c0c66144?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Bộ bàn ăn gồm 1 bàn mặt đá ceramic chống nhiệt đi kèm 6 ghế ngồi bọc da microfiber êm ái, chân hợp kim chắc chắn.",
+                colors: [
+                    { name: "Đen / Ghế Xám", hex: "#1f2937" },
+                    { name: "Trắng / Ghế Kem", hex: "#f9fafb" }
+                ],
+                sizes: ["Bàn 1m4 + 6 Ghế", "Bàn 1m6 + 6 Ghế"]
+            },
+            {
+                id: 6,
+                name: "Ghế Công Thái Học Ergonomic",
+                category: "Văn Phòng",
+                price: 3800000,
+                oldPrice: 4800000,
+                rating: 4.8,
+                badge: "Khuyến Mãi",
+                images: [
+                    "https://images.unsplash.com/photo-1580481077494-e3299acae5e7?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Ghế làm việc công thái học hỗ trợ cột sống, tựa đầu điều chỉnh đa chiều, lưới thoáng khí cao cấp chống mỏi lưng khi ngồi lâu.",
+                colors: [
+                    { name: "Đen Toàn Bộ", hex: "#000000" },
+                    { name: "Trắng Xám", hex: "#9ca3af" }
+                ],
+                sizes: ["Tiêu Chuẩn (Ergo Pro)"]
+            },
+            {
+                id: 7,
+                name: "Bàn Làm Việc Chữ L Thông Minh",
+                category: "Văn Phòng",
+                price: 4900000,
+                oldPrice: 5900000,
+                rating: 4.7,
+                badge: "Mới",
+                images: [
+                    "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Bàn làm việc góc chữ L rộng rãi, tích hợp kệ sách và khe đi dây điện gọn gàng. Gỗ MDF chống ẩm phủ Melamine cao cấp.",
+                colors: [
+                    { name: "Vân Gỗ Sồi", hex: "#b45309" },
+                    { name: "Đen Nhám", hex: "#18181b" }
+                ],
+                sizes: ["1m4 x 1m2", "1m6 x 1m4"]
+            },
+            {
+                id: 8,
+                name: "Kệ Tivi Gỗ MDF Phủ Acrylic",
+                category: "Phòng Khách",
+                price: 3600000,
+                oldPrice: 4500000,
+                rating: 4.6,
+                badge: "Hot",
+                images: [
+                    "https://images.unsplash.com/photo-1595515106967-1ce29566ff1c?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+                ],
+                description: "Kệ tivi treo tường hoặc đặt sàn phong cách hiện đại tối giản. Bề mặt phủ acrylic bóng gương dễ dàng lau chùi, chống trầy.",
+                colors: [
+                    { name: "Trắng Bóng", hex: "#ffffff" },
+                    { name: "Xám Bóng", hex: "#6b7280" }
+                ],
+                sizes: ["Chiều Dài 1m6", "Chiều Dài 2m0"]
+            }
+        ];
+
+        // Application State
+        let cart = JSON.parse(localStorage.getItem('trithuc_cart')) || [];
+        let orders = JSON.parse(localStorage.getItem('trithuc_orders')) || [];
+        let currentTab = 'home';
+        let currentFilteredProducts = [...products];
+        let activeProductDetail = null;
+        let selectedColorIndex = 0;
+        let selectedSizeIndex = 0;
+        let detailQty = 1;
+
+        // Initialize App on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFeaturedProducts();
+            renderShopProducts();
+            renderCategoryFilters();
+            updateCartBadge();
+            updateOrderBadges();
+            lucide.createIcons();
+        });
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Update Nav active styling
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.target === tabId) {
+                    link.classList.add('text-brand-600', 'border-brand-600');
+                    link.classList.remove('text-stone-600', 'border-transparent');
+                } else {
+                    link.classList.remove('text-brand-600', 'border-brand-600');
+                    link.classList.add('text-stone-600', 'border-transparent');
+                }
+            });
+
+            if (tabId === 'orders') {
+                renderOrdersList();
+            }
+
+            lucide.createIcons();
+        }
+
+        // Format Currency VND
+        function formatVND(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        // Toast Notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIconContainer');
+            
+            toastMsg.textContent = message;
+            if (isError) {
+                toastIcon.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5 text-red-400"></i>';
+            } else {
+                toastIcon.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>';
+            }
+            lucide.createIcons();
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Render Home Featured Products
+        function renderFeaturedProducts() {
+            const grid = document.getElementById('featuredProductsGrid');
+            if (!grid) return;
+            const featured = products.slice(0, 4);
+            grid.innerHTML = featured.map(p => createProductCardHTML(p)).join('');
+            lucide.createIcons();
+        }
+
+        // Render Product Card HTML
+        function createProductCardHTML(p) {
+            return `
+                <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="relative aspect-square overflow-hidden bg-stone-100 cursor-pointer" onclick="openProductDetail(${p.id})">
+                            <img src="${p.images[0]}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            ${p.badge ? `<span class="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">${p.badge}</span>` : ''}
+                            <button onclick="event.stopPropagation(); openProductDetail(${p.id});" class="absolute bottom-3 right-3 bg-white/90 hover:bg-white text-stone-800 p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="p-5">
+                            <span class="text-xs uppercase tracking-wider text-brand-600 font-semibold">${p.category}</span>
+                            <h3 onclick="openProductDetail(${p.id})" class="font-bold text-stone-900 mt-1 cursor-pointer hover:text-brand-600 transition-colors line-clamp-1">${p.name}</h3>
+                            <div class="flex items-center space-x-1 mt-2 text-amber-500 text-xs">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                <span class="font-bold text-stone-700">${p.rating}</span>
+                                <span class="text-stone-400">(đã bán 120+)</span>
+                            </div>
+                            <div class="mt-4 flex items-baseline space-x-2">
+                                <span class="text-lg font-bold text-brand-700">${formatVND(p.price)}</span>
+                                <span class="text-xs text-stone-400 line-through">${formatVND(p.oldPrice)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="quickAddToCart(${p.id})" class="w-full py-2.5 bg-stone-900 hover:bg-brand-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="shopping-bag" class="w-4 h-4"></i> Thêm Giỏ Hàng
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Shop Products Grid
+        function renderShopProducts() {
+            const grid = document.getElementById('shopProductsGrid');
+            const noFound = document.getElementById('noProductsFound');
+            const countLabel = document.getElementById('productCountLabel');
+            if (!grid) return;
+
+            countLabel.textContent = `Hiển thị ${currentFilteredProducts.length} sản phẩm`;
+
+            if (currentFilteredProducts.length === 0) {
+                grid.innerHTML = '';
+                noFound.classList.remove('hidden');
+                return;
+            }
+
+            noFound.classList.add('hidden');
+            grid.innerHTML = currentFilteredProducts.map(p => createProductCardHTML(p)).join('');
+            lucide.createIcons();
+        }
+
+        // Render Category Filter Checkboxes
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFiltersList');
+            if (!container) return;
+            const categories = ["Phòng Khách", "Phòng Ngủ", "Nhà Bếp", "Văn Phòng"];
+            
+            let html = `
+                <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                    <input type="radio" name="categoryFilter" value="all" checked onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                    <span>Tất cả danh mục</span>
+                </label>
+            `;
+
+            categories.forEach(cat => {
+                html += `
+                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                        <input type="radio" name="categoryFilter" value="${cat}" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                        <span>${cat}</span>
+                    </label>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Filter & Sort Logic
+        function filterByCategory(catName) {
+            switchTab('shop');
+            const radios = document.querySelectorAll('input[name="categoryFilter"]');
+            radios.forEach(r => {
+                if (r.value === catName) r.checked = true;
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const selectedCat = document.querySelector('input[name="categoryFilter"]:checked')?.value || 'all';
+            const selectedPrice = document.querySelector('input[name="priceRange"]:checked')?.value || 'all';
+            const sortBy = document.getElementById('sortBySelect').value;
+            const searchQuery = document.getElementById('searchInput')?.value.toLowerCase() || '';
+
+            let result = [...products];
+
+            // Search query filter
+            if (searchQuery.trim() !== '') {
+                result = result.filter(p => p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery));
+            }
+
+            // Category filter
+            if (selectedCat !== 'all') {
+                result = result.filter(p => p.category === selectedCat);
+            }
+
+            // Price range filter
+            if (selectedPrice !== 'all') {
+                const [min, max] = selectedPrice.split('-').map(Number);
+                result = result.filter(p => p.price >= min && p.price <= max);
+            }
+
+            // Sorting
+            if (sortBy === 'price-asc') {
+                result.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'price-desc') {
+                result.sort((a, b) => b.price - a.price);
+            } else if (sortBy === 'rating') {
+                result.sort((a, b) => b.rating - a.rating);
+            }
+
+            currentFilteredProducts = result;
+            renderShopProducts();
+        }
+
+        function handleSearch(e) {
+            const query = e.target.value;
+            // Sync mobile/desktop inputs
+            document.getElementById('searchInput').value = query;
+            if(document.getElementById('mobileSearchInput')) {
+                document.getElementById('mobileSearchInput').value = query;
+            }
+            if (currentTab !== 'shop' && query.trim().length > 0) {
+                switchTab('shop');
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.querySelector('input[name="categoryFilter"][value="all"]').checked = true;
+            document.querySelector('input[name="priceRange"][value="all"]').checked = true;
+            document.getElementById('sortBySelect').value = 'featured';
+            if(document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+            currentFilteredProducts = [...products];
+            renderShopProducts();
+        }
+
+        // Product Detail View
+        function openProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            activeProductDetail = product;
+            selectedColorIndex = 0;
+            selectedSizeIndex = 0;
+            detailQty = 1;
+
+            switchTab('detail');
+
+            document.getElementById('detailBreadcrumbName').textContent = product.name;
+            document.getElementById('detailCategoryBadge').textContent = product.category;
+            document.getElementById('detailTitle').textContent = product.name;
+            document.getElementById('detailPrice').textContent = formatVND(product.price);
+            document.getElementById('detailOldPrice').textContent = formatVND(product.oldPrice);
+            document.getElementById('detailDescription').textContent = product.description;
+            document.getElementById('detailMainImage').src = product.images[0];
+            document.getElementById('detailQuantity').textContent = detailQty;
+
+            // Render Thumbnails
+            const thumbsContainer = document.getElementById('detailThumbnails');
+            thumbsContainer.innerHTML = product.images.map((img, idx) => `
+                <div onclick="setMainImage('${img}')" class="aspect-square bg-stone-100 rounded-xl overflow-hidden border-2 border-stone-200 hover:border-brand-600 cursor-pointer">
+                    <img src="${img}" alt="Thumb" class="w-full h-full object-cover">
+                </div>
+            `).join('');
+
+            // Render Colors
+            const colorContainer = document.getElementById('detailColorsContainer');
+            document.getElementById('selectedColorLabel').textContent = product.colors[0].name;
+            colorContainer.innerHTML = product.colors.map((c, idx) => `
+                <button onclick="selectColor(${idx})" class="w-10 h-10 rounded-full border-2 ${idx === 0 ? 'border-brand-600 scale-110 shadow-md' : 'border-stone-300'} flex items-center justify-center transition-all" style="background-color: ${c.hex};" title="${c.name}"></button>
+            `).join('');
+
+            // Render Sizes
+            const sizeContainer = document.getElementById('detailSizesContainer');
+            document.getElementById('selectedSizeLabel').textContent = product.sizes[0];
+            sizeContainer.innerHTML = product.sizes.map((s, idx) => `
+                <button onclick="selectSize(${idx})" class="px-4 py-2 rounded-xl text-sm font-semibold border ${idx === 0 ? 'bg-brand-600 text-white border-brand-600 shadow-sm' : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'} transition-all">${s}</button>
+            `).join('');
+        }
+
+        function setMainImage(url) {
+            document.getElementById('detailMainImage').src = url;
+        }
+
+        function selectColor(idx) {
+            selectedColorIndex = idx;
+            document.getElementById('selectedColorLabel').textContent = activeProductDetail.colors[idx].name;
+            const buttons = document.getElementById('detailColorsContainer').children;
+            for (let i = 0; i < buttons.length; i++) {
+                if (i === idx) {
+                    buttons[i].className = "w-10 h-10 rounded-full border-2 border-brand-600 scale-110 shadow-md flex items-center justify-center transition-all";
+                } else {
+                    buttons[i].className = "w-10 h-10 rounded-full border-2 border-stone-300 flex items-center justify-center transition-all";
+                }
+            }
+        }
+
+        function selectSize(idx) {
+            selectedSizeIndex = idx;
+            document.getElementById('selectedSizeLabel').textContent = activeProductDetail.sizes[idx];
+            const buttons = document.getElementById('detailSizesContainer').children;
+            for (let i = 0; i < buttons.length; i++) {
+                if (i === idx) {
+                    buttons[i].className = "px-4 py-2 rounded-xl text-sm font-semibold border bg-brand-600 text-white border-brand-600 shadow-sm transition-all";
+                } else {
+                    buttons[i].className = "px-4 py-2 rounded-xl text-sm font-semibold border bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100 transition-all";
+                }
+            }
+        }
+
+        function adjustDetailQty(amount) {
+            detailQty += amount;
+            if (detailQty < 1) detailQty = 1;
+            document.getElementById('detailQuantity').textContent = detailQty;
+        }
+
+        function addCurrentProductToCart() {
+            if (!activeProductDetail) return;
+            const item = {
+                cartId: `${activeProductDetail.id}-${selectedColorIndex}-${selectedSizeIndex}`,
+                id: activeProductDetail.id,
+                name: activeProductDetail.name,
+                price: activeProductDetail.price,
+                image: activeProductDetail.images[0],
+                color: activeProductDetail.colors[selectedColorIndex].name,
+                size: activeProductDetail.sizes[selectedSizeIndex],
+                quantity: detailQty
+            };
+
+            const existingIndex = cart.findIndex(ci => ci.cartId === item.cartId);
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += detailQty;
+            } else {
+                cart.push(item);
+            }
+
+            saveCart();
+            showToast(`Đã thêm "${activeProductDetail.name}" vào giỏ hàng!`);
+            toggleCartDrawer(true);
+        }
+
+        function buyNowCurrentProduct() {
+            addCurrentProductToCart();
+            toggleCartDrawer(false);
+            proceedToCheckout();
+        }
+
+        function quickAddToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const item = {
+                cartId: `${product.id}-0-0`,
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.images[0],
+                color: product.colors[0].name,
+                size: product.sizes[0],
+                quantity: 1
+            };
+
+            const existingIndex = cart.findIndex(ci => ci.cartId === item.cartId);
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push(item);
+            }
+
+            saveCart();
+            showToast(`Đã thêm "${product.name}" vào giỏ hàng!`);
+            toggleCartDrawer(true);
+        }
+
+        // Cart Drawer Operations
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const panel = document.getElementById('cartPanel');
+            const overlay = document.getElementById('cartOverlay');
+
+            if (open) {
+                drawer.classList.remove('hidden');
+                renderCartItems();
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    panel.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                overlay.classList.add('opacity-0');
+                panel.classList.add('translate-x-full');
+                setTimeout(() => {
+                    drawer.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('trithuc_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartBadge').textContent = totalItems;
+            document.getElementById('cartItemCount').textContent = totalItems;
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsContainer');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="font-bold text-stone-900">Giỏ hàng trống</h3>
+                        <p class="text-sm text-stone-500 mt-1">Hãy chọn sản phẩm yêu thích cho ngôi nhà của bạn.</p>
+                    </div>
+                `;
+                subtotalEl.textContent = formatVND(0);
+                lucide.createIcons();
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = cart.map((item, idx) => {
+                subtotal += item.price * item.quantity;
+                return `
+                    <div class="flex items-center space-x-4 bg-stone-50 p-4 rounded-2xl border border-stone-200">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl border border-stone-200">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-stone-900 text-sm line-clamp-1">${item.name}</h4>
+                            <p class="text-xs text-stone-500 mt-0.5">Màu: ${item.color} | Size: ${item.size}</p>
+                            <div class="flex items-center justify-between mt-3">
+                                <span class="font-bold text-brand-700 text-sm">${formatVND(item.price)}</span>
+                                <div class="flex items-center border border-stone-300 rounded-lg bg-white overflow-hidden">
+                                    <button onclick="updateCartQty('${item.cartId}', -1)" class="px-2 py-0.5 text-stone-700 font-bold hover:bg-stone-100">-</button>
+                                    <span class="px-2.5 text-xs font-bold text-stone-900">${item.quantity}</span>
+                                    <button onclick="updateCartQty('${item.cartId}', 1)" class="px-2 py-0.5 text-stone-700 font-bold hover:bg-stone-100">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="removeCartItem('${item.cartId}')" class="text-stone-400 hover:text-red-500 p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            subtotalEl.textContent = formatVND(subtotal);
+            lucide.createIcons();
+        }
+
+        function updateCartQty(cartId, delta) {
+            const item = cart.find(ci => ci.cartId === cartId);
+            if (!item) return;
+            item.quantity += delta;
+            if (item.quantity <= 0) {
+                cart = cart.filter(ci => ci.cartId !== cartId);
+            }
+            saveCart();
+            renderCartItems();
+        }
+
+        function removeCartItem(cartId) {
+            cart = cart.filter(ci => ci.cartId !== cartId);
+            saveCart();
+            renderCartItems();
+            showToast("Đã xóa sản phẩm khỏi giỏ hàng.");
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                showToast("Giỏ hàng của bạn đang trống!", true);
+                return;
+            }
+            toggleCartDrawer(false);
+            switchTab('checkout');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkoutSubtotal').textContent = formatVND(subtotal);
+            document.getElementById('checkoutTotal').textContent = formatVND(subtotal);
+        }
+
+        // Checkout Simulation & Orders
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('shipName').value;
+            const phone = document.getElementById('shipPhone').value;
+            const email = document.getElementById('shipEmail').value;
+            const address = document.getElementById('shipAddress').value;
+            const note = document.getElementById('shipNote').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const newOrder = {
+                id: 'TT-' + Math.floor(100000 + Math.random() * 900000),
+                date: new Date().toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }),
+                items: [...cart],
+                total: subtotal,
+                customer: { name, phone, email, address, note },
+                paymentMethod: paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng (COD)' : (paymentMethod === 'BankTransfer' ? 'Chuyển khoản QR' : 'Ví điện tử'),
+                status: 'Chờ xác nhận'
+            };
+
+            orders.unshift(newOrder);
+            localStorage.setItem('trithuc_orders', JSON.stringify(orders));
+            
+            // Clear cart
+            cart = [];
+            saveCart();
+
+            updateOrderBadges();
+            showToast(`Đặt hàng thành công! Mã đơn: ${newOrder.id}`);
+            switchTab('orders');
+        }
+
+        function updateOrderBadges() {
+            document.getElementById('orderCountBadge').textContent = orders.length;
+            if(document.getElementById('mobileOrderBadge')) {
+                document.getElementById('mobileOrderBadge').textContent = orders.length;
+            }
+        }
+
+        function renderOrdersList() {
+            const container = document.getElementById('ordersListContainer');
+            const noOrdersState = document.getElementById('noOrdersState');
+
+            if (orders.length === 0) {
+                container.innerHTML = '';
+                noOrdersState.classList.remove('hidden');
+                return;
+            }
+
+            noOrdersState.classList.add('hidden');
+            container.innerHTML = orders.map(o => `
+                <div class="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-100 gap-2">
+                        <div>
+                            <span class="font-bold text-stone-900 text-base">Đơn hàng #${o.id}</span>
+                            <span class="text-xs text-stone-400 block sm:inline sm:ml-3">Đặt ngày: ${o.date}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">${o.status}</span>
+                            <button onclick="cancelOrder('${o.id}')" class="text-xs text-red-600 hover:underline font-semibold">Hủy đơn</button>
+                        </div>
+                    </div>
+
+                    <div class="py-4 space-y-3">
+                        ${o.items.map(item => `
+                            <div class="flex items-center space-x-4">
+                                <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-xl border border-stone-200">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-stone-900 text-sm line-clamp-1">${item.name}</h4>
+                                    <p class="text-xs text-stone-500">Màu: ${item.color} | Size: ${item.size} | Số lượng: ${item.quantity}</p>
+                                </div>
+                                <span class="font-bold text-stone-900 text-sm">${formatVND(item.price * item.quantity)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="pt-4 border-t border-stone-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-stone-50 p-4 rounded-2xl">
+                        <div class="text-xs text-stone-600 space-y-1">
+                            <p><span class="font-semibold text-stone-900">Người nhận:</span> ${o.customer.name} - ${o.customer.phone}</p>
+                            <p><span class="font-semibold text-stone-900">Địa chỉ:</span> ${o.customer.address}</p>
+                            <p><span class="font-semibold text-stone-900">Thanh toán:</span> ${o.paymentMethod}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-stone-500 block">Tổng cộng:</span>
+                            <span class="text-xl font-extrabold text-brand-700">${formatVND(o.total)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) {
+                orders = orders.filter(o => o.id !== orderId);
+                localStorage.setItem('trithuc_orders', JSON.stringify(orders));
+                updateOrderBadges();
+                renderOrdersList();
+                showToast("Đã hủy đơn hàng thành công.");
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => menu.classList.remove('opacity-0'), 10);
+            } else {
+                menu.classList.add('opacity-0');
+                setTimeout(() => menu.classList.add('hidden'), 300);
+            }
+        }
+
+        // Login Modal Logic
+        function applyRoleUI() {
+            const role = sessionStorage.getItem('trithuc_role');
+            const hasLoggedIn = sessionStorage.getItem('trithuc_logged_in');
+            
+            const els = {
+                navAdmin: document.getElementById('nav-admin'),
+                navOrders: document.getElementById('nav-orders'),
+                navCart: document.getElementById('nav-cart'),
+                navLogout: document.getElementById('nav-logout'),
+                mobileNavAdmin: document.getElementById('mobile-nav-admin'),
+                mobileNavOrders: document.getElementById('mobile-nav-orders'),
+                mobileNavLogout: document.getElementById('mobile-nav-logout')
+            };
+
+            if (hasLoggedIn) {
+                if (els.navLogout) els.navLogout.classList.remove('hidden');
+                if (els.mobileNavLogout) els.mobileNavLogout.classList.remove('hidden');
+
+                if (role === 'admin') {
+                    if (els.navAdmin) els.navAdmin.classList.remove('hidden');
+                    if (els.mobileNavAdmin) els.mobileNavAdmin.classList.remove('hidden');
+                    if (els.navOrders) els.navOrders.classList.add('hidden');
+                    if (els.mobileNavOrders) els.mobileNavOrders.classList.add('hidden');
+                    if (els.navCart) els.navCart.classList.add('hidden');
+                } else {
+                    if (els.navAdmin) els.navAdmin.classList.add('hidden');
+                    if (els.mobileNavAdmin) els.mobileNavAdmin.classList.add('hidden');
+                    if (els.navOrders) els.navOrders.classList.remove('hidden');
+                    if (els.mobileNavOrders) els.mobileNavOrders.classList.remove('hidden');
+                    if (els.navCart) els.navCart.classList.remove('hidden');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasLoggedIn = sessionStorage.getItem('trithuc_logged_in');
+            const loginModal = document.getElementById('loginModal');
+            if (!hasLoggedIn) {
+                loginModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                loginModal.classList.add('hidden');
+                loginModal.style.display = 'none';
+                document.body.style.overflow = '';
+                applyRoleUI();
+                if (sessionStorage.getItem('trithuc_role') === 'admin') {
+                    switchTab('admin');
+                }
+            }
+        });
+
+        function handleLogin(role) {
+            sessionStorage.setItem('trithuc_logged_in', 'true');
+            sessionStorage.setItem('trithuc_role', role);
+            
+            const loginModal = document.getElementById('loginModal');
+            const modalContent = document.getElementById('loginModalContent');
+            
+            modalContent.classList.add('scale-95', 'opacity-0');
+            loginModal.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                loginModal.classList.add('hidden');
+                loginModal.style.display = 'none';
+                document.body.style.overflow = '';
+                applyRoleUI();
+                
+                if (role === 'admin') {
+                    switchTab('admin');
+                    showToast('Đăng nhập thành công với quyền Admin!');
+                } else {
+                    switchTab('home');
+                    showToast('Đăng nhập thành công! Chúc bạn mua sắm vui vẻ.');
+                }
+            }, 300);
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('trithuc_logged_in');
+            sessionStorage.removeItem('trithuc_role');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
