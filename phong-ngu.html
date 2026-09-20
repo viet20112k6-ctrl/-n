@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa hàng Sách Trí Thức - Nội Thất Hiện Đại</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e3',
+                            500: '#c27803',
+                            600: '#9a5b02',
+                            700: '#7c4701',
+                            800: '#653a03',
+                            900: '#553105',
+                        },
+                        stone: {
+                            850: '#1c1917'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i data-lucide="armchair" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-stone-900 block leading-tight">Trí Thức</span>
+                        <span class="text-xs uppercase tracking-widest text-brand-600 font-semibold">Nội Thất Hiện Đại</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <button onclick="window.location.href='index.html'" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent" data-target="home">Trang Chủ</button>
+                    <button onclick="window.location.href='san-pham.html'" class="nav-link text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-brand-600" data-target="shop">Sản Phẩm</button>
+                    <button onclick="window.location.href='phong-khach.html'" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Phòng Khách</button>
+                    <button onclick="window.location.href='phong-ngu.html'" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Phòng Ngủ</button>
+                    <button onclick="window.location.href='nha-bep.html'" class="text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2">Nhà Bếp</button>
+                    <button id="nav-orders" onclick="window.location.href='don-hang.html'" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent flex items-center gap-1.5" data-target="orders">
+                        <i data-lucide="package" class="w-4 h-4"></i> Đơn Hàng (<span id="orderCountBadge">0</span>)
+                    </button>
+                    <button id="nav-admin" onclick="window.location.href='quan-tri.html'" class="nav-link text-stone-600 hover:text-brand-600 font-medium transition-colors text-sm py-2 border-b-2 border-transparent hidden flex items-center gap-1.5" data-target="admin">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Quản Trị
+                    </button>
+                </nav>
+
+                <!-- Actions: Search & Cart -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden lg:block w-64">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm nội thất..." oninput="handleSearch(event)" class="w-full bg-stone-100 border border-stone-200 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                        <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-3"></i>
+                    </div>
+
+                    <button id="nav-cart" onclick="toggleCartDrawer(true)" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <span id="cartBadge" class="absolute -top-1 -right-1 bg-brand-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">0</span>
+                    </button>
+
+                    <button onclick="handleLogout()" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-red-600 transition-colors hidden" id="nav-logout" title="Đăng xuất">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden transition-opacity opacity-0 md:hidden">
+        <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-sm bg-white p-6 shadow-2xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-stone-100">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                            <i data-lucide="armchair" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-bold text-stone-900">Trí Thức Nội Thất</span>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="p-2 text-stone-500 hover:text-stone-800">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="mt-6 space-y-4">
+                    <div class="relative">
+                        <input type="text" id="mobileSearchInput" placeholder="Tìm kiếm..." oninput="handleSearch(event)" class="w-full bg-stone-100 border border-stone-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none">
+                        <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-2.5"></i>
+                    </div>
+                    <nav class="flex flex-col space-y-2 pt-2">
+                        <button onclick="window.location.href='index.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Trang Chủ</button>
+                        <button onclick="window.location.href='san-pham.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Tất Cả Sản Phẩm</button>
+                        <button onclick="window.location.href='phong-khach.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Phòng Khách</button>
+                        <button onclick="window.location.href='phong-ngu.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Phòng Ngủ</button>
+                        <button onclick="window.location.href='nha-bep.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Nhà Bếp</button>
+                        <button onclick="window.location.href='san-pham.html'; filterByCategory('Văn Phòng'); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100">Văn Phòng</button>
+                        <button id="mobile-nav-orders" onclick="window.location.href='don-hang.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100 flex items-center justify-between">
+                            <span>Quản Lý Đơn Hàng</span>
+                            <span id="mobileOrderBadge" class="bg-brand-100 text-brand-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                        </button>
+                        <button id="mobile-nav-admin" onclick="window.location.href='quan-tri.html'; toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-stone-700 hover:bg-stone-100 hidden">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 inline mr-2"></i> Quản Trị Viên
+                        </button>
+                        <button id="mobile-nav-logout" onclick="handleLogout(); toggleMobileMenu();" class="text-left px-3 py-2 rounded-lg font-medium text-red-600 hover:bg-red-50 hidden">
+                            <i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i> Đăng Xuất
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-stone-100 text-xs text-stone-400 text-center">
+                &copy; 2026 Cửa hàng Sách Trí Thức Nội Thất. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+<main class="flex-grow">
+
+        <div id="view-shop" class="tab-view">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center space-x-2 text-sm text-stone-500 mb-6">
+                    <button onclick="window.location.href='index.html'" class="hover:text-brand-600">Trang Chủ</button>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <span class="text-stone-900 font-medium">Danh Mục Sản Phẩm</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Filters Sidebar -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+                            <div class="flex items-center justify-between pb-4 border-b border-stone-100 mb-6">
+                                <h3 class="font-bold text-stone-900 flex items-center gap-2">
+                                    <i data-lucide="filter" class="w-4 h-4 text-brand-600"></i> Bộ Lọc Tìm Kiếm
+                                </h3>
+                                <button onclick="resetFilters()" class="text-xs text-brand-600 hover:underline font-semibold">Đặt lại</button>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Danh Mục</h4>
+                                <div id="categoryFiltersList" class="space-y-2">
+                                    <!-- Rendered by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Price Range Filter -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Khoảng Giá</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="all" checked onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Tất cả mức giá</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="0-3000000" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Dưới 3.000.000 đ</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="3000000-10000000" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>3.000.000 đ - 10.000.000 đ</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-stone-700 cursor-pointer">
+                                        <input type="radio" name="priceRange" value="10000000-999999999" onchange="applyFilters()" class="text-brand-600 focus:ring-brand-500">
+                                        <span>Trên 10.000.000 đ</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sort By -->
+                            <div>
+                                <h4 class="text-sm font-semibold text-stone-900 mb-3">Sắp Xếp Theo</h4>
+                                <select id="sortBySelect" onchange="applyFilters()" class="w-full bg-stone-50 border border-stone-200 rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="featured">Nổi Bật Nhất</option>
+                                    <option value="price-asc">Giá: Thấp đến Cao</option>
+                                    <option value="price-desc">Giá: Cao đến Thấp</option>
+                                    <option value="rating">Đánh Giá Cao Nhất</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid Display -->
+                    <div class="lg:col-span-3">
+                        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-stone-200 shadow-sm mb-6">
+                            <span id="productCountLabel" class="text-sm text-stone-600 font-medium">Hiển thị tất cả sản phẩm</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-stone-500 hidden sm:inline">Trạng thái: Sẵn hàng giao ngay</span>
+                            </div>
+                        </div>
+
+                        <div id="shopProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Populated via JS -->
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="noProductsFound" class="hidden text-center py-16 bg-white rounded-2xl border border-stone-200 p-8">
+                            <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="search-x" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-stone-900">Không tìm thấy sản phẩm phù hợp</h3>
+                            <p class="text-sm text-stone-500 mt-1 mb-6">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
+                            <button onclick="resetFilters()" class="px-5 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-semibold shadow-md">Xóa Bộ Lọc</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>window.defaultCategory = "Phòng Ngủ";</script>
+</main>
+<!-- Cart Slide-Over Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-stone-900/50 backdrop-blur-sm transition-opacity opacity-0" id="cartOverlay" onclick="toggleCartDrawer(false)"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div id="cartPanel" class="w-screen max-w-md bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300">
+                <!-- Cart Header -->
+                <div class="flex items-center justify-between p-6 border-b border-stone-100">
+                    <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-600"></i> Giỏ Hàng Của Bạn (<span id="cartItemCount">0</span>)
+                    </h2>
+                    <button onclick="toggleCartDrawer(false)" class="p-2 text-stone-400 hover:text-stone-700 rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Cart Footer -->
+                <div id="cartFooter" class="p-6 border-t border-stone-100 bg-stone-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-stone-600 font-medium">Tạm tính:</span>
+                        <span id="cartSubtotal" class="text-xl font-extrabold text-stone-900">0 đ</span>
+                    </div>
+                    <p class="text-xs text-stone-500 mb-4">* Phí vận chuyển và thuế sẽ được tính ở trang thanh toán.</p>
+                    <div class="space-y-3">
+                        <button onclick="proceedToCheckout()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                            <span>Tiến Hành Thanh Toán</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="toggleCartDrawer(false)" class="w-full py-3 bg-white border border-stone-300 hover:bg-stone-100 text-stone-800 font-semibold rounded-xl text-sm transition-all">
+                            Tiếp Tục Mua Sắm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Message Box -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-stone-900 text-white px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-stone-800">
+            <div id="toastIconContainer" class="text-emerald-400">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </div>
+            <span id="toastMessage" class="text-sm font-medium">Thông báo thành công!</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white">
+                        <i data-lucide="armchair" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-lg font-bold text-white">Trí Thức Nội Thất</span>
+                </div>
+                <p class="text-stone-400 text-sm leading-relaxed mb-6">
+                    Đơn vị hàng đầu trong lĩnh vực thiết kế và cung cấp nội thất hiện đại cao cấp, mang đến vẻ đẹp tinh tế cho mọi không gian sống.
+                </p>
+                <div class="flex space-x-3 text-stone-400">
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Không Gian</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><button onclick="window.location.href='phong-khach.html';" class="hover:text-brand-400 transition-colors">Phòng Khách Hiện Đại</button></li>
+                    <li><button onclick="window.location.href='phong-ngu.html';" class="hover:text-brand-400 transition-colors">Phòng Ngủ Ấm Cúng</button></li>
+                    <li><button onclick="window.location.href='nha-bep.html';" class="hover:text-brand-400 transition-colors">Nhà Bếp & Ăn Uống</button></li>
+                    <li><button onclick="window.location.href='san-pham.html'; filterByCategory('Văn Phòng');" class="hover:text-brand-400 transition-colors">Văn Phòng Làm Việc</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Chính Sách & Hỗ Trợ</h4>
+                <ul class="space-y-2.5 text-sm">
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Chính Sách Bảo Hành</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Hướng Dẫn Mua Hàng</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Chính Sách Đổi Trả</a></li>
+                    <li><a href="#" class="hover:text-brand-400 transition-colors">Tư Vấn Thiết Kế Miễn Phí</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Liên Hệ & Showroom</h4>
+                <ul class="space-y-3 text-sm text-stone-400">
+                    <li class="flex items-start gap-3">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-brand-500 flex-shrink-0 mt-0.5"></i>
+                        <span>123 Đường Nội Thất, Quận 1, TP. Hồ Chí Minh</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="phone" class="w-5 h-5 text-brand-500 flex-shrink-0"></i>
+                        <span>Hotline: 1900 6789</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-brand-500 flex-shrink-0"></i>
+                        <span>contact@trithucinterior.vn</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-stone-800 text-center text-xs text-stone-500">
+            &copy; 2026 Cửa hàng Sách Trí Thức - Nội Thất Hiện Đại. Bản quyền thuộc về Trí Thức.
+        </div>
+    </footer>
+
+    <!-- Login Modal (Admin & Buyer) -->
+    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 backdrop-blur-md transition-all duration-300">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl transform transition-all duration-300 scale-100" id="loginModalContent">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 mx-auto flex items-center justify-center text-white shadow-lg shadow-brand-500/30 mb-4">
+                    <i data-lucide="armchair" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-stone-900">Đăng Nhập</h2>
+                <p class="text-stone-500 text-sm mt-2">Vui lòng chọn vai trò để tiếp tục</p>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="handleLogin('admin')" class="w-full flex items-center justify-between p-4 rounded-xl border border-stone-200 hover:border-brand-500 hover:bg-brand-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-stone-100 group-hover:bg-brand-100 flex items-center justify-center text-stone-600 group-hover:text-brand-600 transition-colors">
+                            <i data-lucide="shield" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-stone-900">Quản Trị Viên (Admin)</h3>
+                            <p class="text-xs text-stone-500">Truy cập trang quản lý cửa hàng</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-stone-400 group-hover:text-brand-600 transition-colors"></i>
+                </button>
+                
+                <button onclick="handleLogin('buyer')" class="w-full flex items-center justify-between p-4 rounded-xl border border-stone-200 hover:border-brand-500 hover:bg-brand-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-stone-100 group-hover:bg-brand-100 flex items-center justify-center text-stone-600 group-hover:text-brand-600 transition-colors">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-stone-900">Người Mua</h3>
+                            <p class="text-xs text-stone-500">Khám phá và mua sắm nội thất</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-stone-400 group-hover:text-brand-600 transition-colors"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
